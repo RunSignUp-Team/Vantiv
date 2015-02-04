@@ -107,7 +107,7 @@ class InstructionBasedFunding extends BatchTransaction
 	 * @param int $fundsTransferId Funds transfer id
 	 * @param int $amountInCents Amount in cents
 	 */
-	public function addReservetDebit($fundingSubMerchantId, $fundsTransferId, $amountInCents)
+	public function addReserveDebit($fundingSubMerchantId, $fundsTransferId, $amountInCents)
 	{
 		$this->reserveDebits[] = array(
 			'fundingSubmerchantId' => $fundingSubMerchantId,
