@@ -324,7 +324,7 @@ class InstructionBasedFunding extends BatchTransaction
 		unset($reserveDebit);
 		
 		// Check for data
-		if ($numSubmerchantCredits == 0 && $numSubmerchantDebits == 0 && $numPhysicalCheckCredits == 0 && $numPhysicalCheckDebits == 0 && $numPayFacCredits == 0 && $numPayFacDebits == 0 && $reserveCredits == 0 && $reserveDebits == 0)
+		if ($numSubmerchantCredits == 0 && $numSubmerchantDebits == 0 && $numPhysicalCheckCredits == 0 && $numPhysicalCheckDebits == 0 && $numPayFacCredits == 0 && $numPayFacDebits == 0 && $numReserveCredits == 0 && $numReserveDebits == 0)
 			return null;
 		
 		// Add batchRequest element
