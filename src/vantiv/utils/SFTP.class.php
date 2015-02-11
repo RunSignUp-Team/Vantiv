@@ -57,6 +57,7 @@ class SFTP
 		// Build commands
 		$cmds = "cd inbound\n";
 		$cmds .= 'put ' . escapeshellarg($localFilename) . ' ' . escapeshellarg($remoteFilenamePrg) . "\n";
+		$cmds .= 'chmod 666 ' . escapeshellarg($remoteFilenamePrg) . "\n";
 		$cmds .= 'rename ' . escapeshellarg($remoteFilenamePrg) . ' ' . escapeshellarg($remoteFilename) . "\n";
 		
 		// Run commands

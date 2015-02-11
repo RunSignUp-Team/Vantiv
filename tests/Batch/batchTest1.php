@@ -13,23 +13,23 @@ try
 	
 	// Batch test 1
 	$vantivFundingApi->addPayFacCredit(123, '00001', 1000);
-	$vantivFundingApi->addSubmerchantCredit(123, 'Submerchant Name', '00003', 3000, 'Checking', '123456789012', '114567895');
+	$vantivFundingApi->addSubmerchantCredit(123, 'Submerchant Name', '00003', 3000, 'Checking', '123456789', '114567895');
 	$vantivFundingApi->addReserveCredit(123, '00005', 5000);
 	$vantivFundingApi->addPhysicalCheckCredit(123, '00009', 9000);
 	
 	// Upload file
 	$fundingXml = $vantivFundingApi->getFundingInstructionsXml();
-	SFTP::uploadBatchFileContents(VantivConfig::SFTP_USERNAME, VantivConfig::SFTP_HOST, $fundingXml, 'certTest1.asc');
+	SFTP::uploadBatchFileContents(VantivConfig::SFTP_USERNAME, VantivConfig::SFTP_HOST, $fundingXml, date('YmdHis').'_certTest1.asc');
 	
 	// Batch test 2
 	$vantivFundingApi->addPayFacDebit(123, '00002', 2000);
-	$vantivFundingApi->addSubmerchantDebit(123, 'Submerchant Name', '00004', 4000, 'Checking', '123456789012', '114567895');
+	$vantivFundingApi->addSubmerchantDebit(123, 'Submerchant Name', '00004', 4000, 'Checking', '123456789', '114567895');
 	$vantivFundingApi->addReserveDebit(123, '00006', 6000);
 	$vantivFundingApi->addPhysicalCheckDebit(123, '00010', 10000);
 	
 	// Upload file
 	$fundingXml = $vantivFundingApi->getFundingInstructionsXml();
-	SFTP::uploadBatchFileContents(VantivConfig::SFTP_USERNAME, VantivConfig::SFTP_HOST, $fundingXml, 'certTest2.asc');
+	SFTP::uploadBatchFileContents(VantivConfig::SFTP_USERNAME, VantivConfig::SFTP_HOST, $fundingXml, date('YmdHis').'_certTest2.asc');
 } catch (Exception $e) {
 	var_dump($e->getMessage());
 	print_r($e);
