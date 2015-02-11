@@ -14,11 +14,12 @@ class SFTP
 	 * @param string $sftpUsername SFTP username
 	 * @param string $sftpHost SFTP host
 	 * @param string $fileContents File contents
-	 * @param string $remoteFilename Remove filename.  Must end with .asc
+	 * @param string $remoteFilename Remote filename.  Must end with .asc
+	 * @param string $directory Remove directory
 	 *
 	 * @throws SFTPException
 	 */
-	public static function uploadBatchFileContents($sftpUsername, $sftpHost, $fileContents, $remoteFilename)
+	public static function uploadBatchFileContents($sftpUsername, $sftpHost, $fileContents, $remoteFilename, $directory = 'inbound')
 	{
 		// Build SFTP batch script
 		$tmpfilename = tempnam('/tmp', 'vsftp-');
@@ -31,7 +32,7 @@ class SFTP
 		
 		// Upload the file
 		try {
-			self::uploadBatchFile($sftpUsername, $sftpHost, $tmpfilename, $remoteFilename);
+			self::uploadBatchFile($sftpUsername, $sftpHost, $tmpfilename, $remoteFilename, $directory);
 		} catch (Exception $e) {
 			unlink($tmpfilename);
 			throw $e;
@@ -45,17 +46,18 @@ class SFTP
 	 * @param string $sftpUsername SFTP username
 	 * @param string $sftpHost SFTP host
 	 * @param string $localFilename Filename to upload
-	 * @param string $remoteFilename Remove filename.  Must end with .asc
+	 * @param string $remoteFilename Remote filename.  Must end with .asc
+	 * @param string $directory Remove directory
 	 *
 	 * @throws SFTPException
 	 */
-	public static function uploadBatchFile($sftpUsername, $sftpHost, $localFilename, $remoteFilename)
+	public static function uploadBatchFile($sftpUsername, $sftpHost, $localFilename, $remoteFilename, $directory = 'inbound')
 	{
 		// Create .prg file
 		$remoteFilenamePrg = str_replace('.asc', '.prg', $remoteFilename);
 		
 		// Build commands
-		$cmds = "cd inbound\n";
+		$cmds = 'cd ' . escapeshellarg($directory) . "\n";
 		$cmds .= 'put ' . escapeshellarg($localFilename) . ' ' . escapeshellarg($remoteFilenamePrg) . "\n";
 		$cmds .= 'chmod 666 ' . escapeshellarg($remoteFilenamePrg) . "\n";
 		$cmds .= 'rename ' . escapeshellarg($remoteFilenamePrg) . ' ' . escapeshellarg($remoteFilename) . "\n";
