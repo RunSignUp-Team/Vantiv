@@ -244,7 +244,7 @@ class PayFac
 			'contactPhone' => XmlSpec::getDefaultSpec(),
 			'annualCreditCardSalesVolume' => XmlSpec::getRequiredIntSpec(),
 			'hasAcceptedCreditCards' => new XmlSpec(XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL),
-			'address' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? $this->requiredAddressSpec() :$this->requiredCountryAddressSpec(),
+			'address' => $this->requiredAddressSpec(),
 			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT),
 			'principals' => $this->principalsSpec($legalEntityType)
 		);
