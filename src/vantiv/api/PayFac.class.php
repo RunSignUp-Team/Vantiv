@@ -420,8 +420,8 @@ class PayFac
 			'hardCodedBillingDescriptor' => XmlSpec::getRequiredSpec(),
 			'maxTransactionAmount' => XmlSpec::getRequiredIntSpec(),
 			'merchantCategoryCode' => XmlSpec::getRequiredIntSpec(),
-			'bankRoutingNumber' => XmlSpec::getRequiredIntSpec(),
-			'bankAccountNumber' => XmlSpec::getRequiredIntSpec(),
+			'bankRoutingNumber' => XmlSpec::getRequiredSpec(),
+			'bankAccountNumber' => XmlSpec::getRequiredSpec(),
 			'address' => $this->optionalAddressSpec(),
 			'primaryContact' => new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, array(
 				'firstName' => XmlSpec::getRequiredSpec(),
@@ -461,8 +461,8 @@ class PayFac
 			'customerServiceNumber' => XmlSpec::getDefaultSpec(),
 			'hardCodedBillingDescriptor' => XmlSpec::getDefaultSpec(),
 			'maxTransactionAmount' => XmlSpec::getIntSpec(),
-			'bankRoutingNumber' => XmlSpec::getIntSpec(),
-			'bankAccountNumber' => XmlSpec::getIntSpec(),
+			'bankRoutingNumber' => XmlSpec::getDefaultSpec(),
+			'bankAccountNumber' => XmlSpec::getDefaultSpec(),
 			'address' => $this->optionalAddressSpec(),
 			'primaryContact' => new XmlSpec(0, array(
 				'firstName' => XmlSpec::getDefaultSpec(),
