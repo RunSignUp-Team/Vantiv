@@ -33,8 +33,8 @@ try
 		),
 		'customBilling' => array(
 			'phone' => '5555555555',
-			//'url' => 'https://runsignup.com',	// TODO: Can we use URL?
-			//'descriptor' => 'SignUp *CustomDescriptor#'// TODO: Can we get permission to change this?
+			//'url' => 'https://runsignup.com',	// Note: Can't be used with phone.  Also, can't be more than 13 characters.
+			'descriptor' => 'SignUp *CustomDescriptor#'
 		)
 	), array(
 		// Note: If an id is set, duplicate transaction checking is performed
