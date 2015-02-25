@@ -15,11 +15,11 @@ class VantivErrorException extends VantivException
 	 * Constructor
 	 *
 	 * @param VantivError $errorResp VantivError response
-	 * 
+	 * @param int $statusCode Status code
 	 */
-	public function __construct(VantivError $errorResp)
+	public function __construct(VantivError $errorResp, $statusCode)
 	{
-		parent::__construct(implode(";\n", $errorResp->getErrors()), 0);
+		parent::__construct(implode(";\n", $errorResp->getErrors()), $statusCode);
 		$this->errorResp = $errorResp;
 	}
 }

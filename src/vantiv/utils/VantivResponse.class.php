@@ -45,7 +45,7 @@ class VantivResponse
 			}
 			// Error response with message
 			else if ($this->statusCode == 400 || $this->statusCode == 401)
-				throw new VantivErrorException(new VantivError($this->respStr));
+				throw new VantivErrorException(new VantivError($this->respStr), $this->statusCode);
 		}
 	}
 }
