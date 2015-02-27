@@ -179,7 +179,7 @@ class SFTP
 		fclose($fp);
 		
 		// Execute
-		$cmd = 'sftp -b ' . escapeshellarg($tmpfilename) . ' ' . escapeshellarg($sftpUsername.'@'.$sftpHost) . ' 2>/dev/null';
+		$cmd = 'sftp -o StrictHostKeyChecking=no -b ' . escapeshellarg($tmpfilename) . ' ' . escapeshellarg($sftpUsername.'@'.$sftpHost) . ' 2>/dev/null';
 		exec($cmd, $output, $rtn);
 		
 		// Delete the batch file
