@@ -37,5 +37,35 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 		return isset($this->legalEntityId) ? $this->legalEntityId : null;
 	}
 	
-	// TODO: Look at backgroundCheckResults > business > verificationResults and backgroundCheckResults > principal > verificationResults?
+	/**
+	 * Get KYC score
+	 *
+	 * @return int KYC score (or null)
+	 */
+	public function getKycScore()
+	{
+		return isset($this->backgroundCheckResults->business->verificationResults->overallScore->score) ? (int)$this->backgroundCheckResults->business->verificationResults->overallScore->score : null;
+	}
+	
+	/**
+	 * Get KYC description
+	 *
+	 * @return int KYC score (or null)
+	 */
+	public function getKycDesc()
+	{
+		return isset($this->backgroundCheckResults->business->verificationResults->overallScore->description) ? $this->backgroundCheckResults->business->verificationResults->overallScore->description : null;
+	}
+	
+	/**
+	 * Get background check results
+	 *
+	 * @return array Background check results (or null)
+	 */
+	public function getBackgroundCheckResults()
+	{
+		return isset($this->backgroundCheckResults) ? $this->backgroundCheckResults : null;
+	}
+	
+	// TODO: Look at backgroundCheckResults > principal > verificationResults?
 }
