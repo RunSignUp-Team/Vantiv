@@ -34,6 +34,7 @@ class VantivObj
 	 */
 	protected function parseSimpleXmlElem($elem, array &$destArr = null)
 	{
+		$arrayifiedElems = array();
 		foreach ($elem as $key=>$node)
 		{
 			// Get value
@@ -56,8 +57,11 @@ class VantivObj
 			{
 				if (array_key_exists($key, $destArr))
 				{
-					if (!is_array($destArr[$key]))
+					if (!isset($arrayifiedElems[$key]))
+					{
+						$arrayifiedElems[$key] = true;
 						$destArr[$key] = array($destArr[$key]);
+					}
 					$destArr[$key][] = $val;
 				}
 				else
