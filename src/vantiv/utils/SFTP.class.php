@@ -109,22 +109,23 @@ class SFTP
 	 *
 	 * @param string $sftpUsername SFTP username
 	 * @param string $sftpHost SFTP host
+	 * @param string $remoteOutboundDir Remote outbound directory
 	 * @param string $localOutboundDir Local outbound directory
 	 *
 	 * @throws SFTPException
 	 */
-	public static function syncOutboundDir($sftpUsername, $sftpHost, $localOutboundDir)
+	public static function syncOutboundDir($sftpUsername, $sftpHost, $remoteOutboundDir, $localOutboundDir)
 	{
 		// Get files currently in the directory
 		$filesBefore = scandir($localOutboundDir);
 		
 		// Download files
-		$cmds = "cd outbound\nlcd ".escapeshellarg($localOutboundDir)."\nmget *";
+		$cmds = "cd ".escapeshellarg($remoteOutboundDir)."\nlcd ".escapeshellarg($localOutboundDir)."\nmget *";
 		self::runSFTPCmds($sftpUsername, $sftpHost, $cmds, $output, $rtn);
 		if ($rtn !== 0)
 		{
 			// See if there are just no files
-			$files = self::getFileList($sftpUsername, $sftpHost, 'outbound');
+			$files = self::getFileList($sftpUsername, $sftpHost, $remoteOutboundDir);
 			if (!empty($files))
 				throw new SFTPException('SFTP Outbound Sync Failed (Download).', $rtn, implode("\n", $output));
 		}
@@ -147,7 +148,7 @@ class SFTP
 		$deleteFiles = array_diff($filesAfter, $filesBefore);
 		if (!empty($deleteFiles))
 		{
-			$cmds = "cd outbound\n";
+			$cmds = "cd ".escapeshellarg($remoteOutboundDir)."\n";
 			foreach ($deleteFiles as $file)
 				$cmds .= 'rm '.escapeshellarg($file)."\n";
 			self::runSFTPCmds($sftpUsername, $sftpHost, $cmds, $output, $rtn);
