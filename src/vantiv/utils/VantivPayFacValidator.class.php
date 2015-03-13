@@ -13,11 +13,11 @@ class VantivPayFacValidator
 	/** DBA max length */
 	const DBA_MAX_LENGTH = 60;
 	
-	/** Tax ID max length */
-	const TAX_ID_MAX_LENGTH = 9;
+	/** Tax ID length */
+	const TAX_ID_LENGTH = 9;
 	
-	/** SSN max length */
-	const SSN_MAX_LENGTH = 9;
+	/** SSN length */
+	const SSN_LENGTH = 9;
 	
 	/** Street address 1 max length */
 	const STREET_ADDR1_MAX_LENGTH = 60;
