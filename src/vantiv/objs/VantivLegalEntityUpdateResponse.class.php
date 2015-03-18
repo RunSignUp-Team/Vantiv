@@ -66,6 +66,4 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 	{
 		return isset($this->backgroundCheckResults) ? $this->backgroundCheckResults : null;
 	}
-	
-	// TODO: Look at backgroundCheckResults > principal > verificationResults?
 }
