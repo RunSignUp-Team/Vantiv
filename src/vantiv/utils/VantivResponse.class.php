@@ -33,19 +33,16 @@ class VantivResponse
 		$this->respStr = $respStr;
 		$this->statusCode = $statusCode;
 		
+		// Check status
+		if ($this->statusCode != 200 && $this->statusCode != 201)
+			throw new VantivErrorException(new VantivError($this->respStr), $this->statusCode);
+		
 		// Parse response
 		if ($this->respStr !== null)
 		{
-			// Valid response
-			if ($this->statusCode == 200 || $this->statusCode == 201)
-			{
-				$this->resp = new $classname($this->respStr);
-				if ($this->resp === false)
-					$this->resp = null;
-			}
-			// Error response with message
-			else if ($this->statusCode == 400 || $this->statusCode == 401)
-				throw new VantivErrorException(new VantivError($this->respStr), $this->statusCode);
+			$this->resp = new $classname($this->respStr);
+			if ($this->resp === false)
+				throw new VantivErrorException('Failed to parse response.');
 		}
 	}
 }
