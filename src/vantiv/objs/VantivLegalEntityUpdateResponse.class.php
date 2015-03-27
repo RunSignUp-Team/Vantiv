@@ -40,12 +40,14 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 	/**
 	 * Get KYC score
 	 *
+	 * @param bool $principal Get principal score
+	 *
 	 * @return int KYC score (or null)
 	 */
-	public function getKycScore()
+	public function getKycScore($principal)
 	{
 		// Use principal for individual
-		if ($this->legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP')
+		if ($principal)
 			return isset($this->backgroundCheckResults['principal']['verificationResult']['overallScore']['score']) ? (int)$this->backgroundCheckResults['principal']['verificationResult']['overallScore']['score'] : null;
 		else
 			return isset($this->backgroundCheckResults['business']['verificationResult']['overallScore']['score']) ? (int)$this->backgroundCheckResults['business']['verificationResult']['overallScore']['score'] : null;
@@ -54,12 +56,14 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 	/**
 	 * Get KYC description
 	 *
+	 * @param bool $principal Get principal score
+	 *
 	 * @return int KYC score (or null)
 	 */
-	public function getKycDesc()
+	public function getKycDesc($principal)
 	{
 		// Use principal for individual
-		if ($this->legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP')
+		if ($principal)
 			return isset($this->backgroundCheckResults['principal']['verificationResult']['overallScore']['description']) ? $this->backgroundCheckResults['principal']['verificationResult']['overallScore']['description'] : null;
 		else
 			return isset($this->backgroundCheckResults['business']['verificationResult']['overallScore']['description']) ? $this->backgroundCheckResults['business']['verificationResult']['overallScore']['description'] : null;
