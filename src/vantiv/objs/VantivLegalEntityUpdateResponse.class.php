@@ -44,7 +44,7 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 	 */
 	public function getKycScore()
 	{
-		return isset($this->backgroundCheckResults->business->verificationResults->overallScore->score) ? (int)$this->backgroundCheckResults->business->verificationResults->overallScore->score : null;
+		return isset($this->backgroundCheckResults['business']['verificationResults']['overallScore']['score']) ? (int)$this->backgroundCheckResults['business']['verificationResults']['overallScore']['score'] : null;
 	}
 	
 	/**
@@ -54,7 +54,7 @@ class VantivLegalEntityUpdateResponse extends VantivObj
 	 */
 	public function getKycDesc()
 	{
-		return isset($this->backgroundCheckResults->business->verificationResults->overallScore->description) ? $this->backgroundCheckResults->business->verificationResults->overallScore->description : null;
+		return isset($this->backgroundCheckResults['business']['verificationResults']['overallScore']['description']) ? $this->backgroundCheckResults['business']['verificationResults']['overallScore']['description'] : null;
 	}
 	
 	/**
