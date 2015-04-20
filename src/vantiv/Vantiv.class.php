@@ -17,6 +17,12 @@ class Vantiv
 	/** API password */
 	protected $apiPswd = null;
 	
+	/** Proxy */
+	protected $proxy = null;
+	
+	/** Proxy username and password */
+	protected $proxyUserPswd = null;
+	
 	/** Connect timeout */
 	protected $connectTimeout = 10;
 	
@@ -28,11 +34,15 @@ class Vantiv
    *
    * @param string $apiUsername API username
    * @param string $$apiPswd API password
+   * @param string $proxy Optional proxy to use
+   * @param string $proxyUserPswd Optional proxy user and password
 	 */
-	public function __construct($apiUsername, $apiPswd)
+	public function __construct($apiUsername, $apiPswd, $proxy = null, $proxyUserPswd = null)
 	{
 		$this->apiUsername = $apiUsername;
 		$this->apiPswd = $apiPswd;
+		$this->proxy = $proxy;
+		$this->proxyUserPswd = $proxyUserPswd;
 	}
 	
 	/**
@@ -78,6 +88,13 @@ class Vantiv
 		// Timeouts
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
 		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+		
+		// Set up proxy
+		if ($this->proxy !== null)
+		{
+			curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxyUserPswd);
+		}
 		
 		// Determine HTTP method
 		if ($httpMethod == 'GET')
