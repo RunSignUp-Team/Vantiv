@@ -65,7 +65,7 @@ class VantivSubMerchant extends VantivObj
 	 */
 	public function getFundingSubMerchantId()
 	{
-		//return isset($this->subMerchantFunding['fundingSubmerchantId']) ? $this->subMerchantFunding['fundingSubmerchantId'] : null;
-		return $this->getSubMerchantId();
+		// According to Mike Olson, we should use merchantIdentString.
+		return $this->getMerchantIdentString();
 	}
 }
