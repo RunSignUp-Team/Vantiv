@@ -24,9 +24,9 @@ class Vantiv
 	protected $proxyUserPswd = null;
 	
 	/** Connect timeout */
-	protected $connectTimeout = 10;
+	protected $connectTimeout = 20;
 	
-	/** Connect timeout */
+	/** Timeout */
 	protected $timeout = 45;
 	
 	/**
