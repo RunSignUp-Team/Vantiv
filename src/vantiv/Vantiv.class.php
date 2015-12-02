@@ -260,7 +260,7 @@ class Vantiv
 					if (!$resp)
 					{
 						// Add exception to response
-						$rtn[$idx] = new VantivException(curl_error($data['handle']), curl_errno($data['handle']));
+						$rtn[$idx] = new VantivException(curl_error($data['handle']) . "\nStatus Code: " . $statusCode, curl_errno($data['handle']));
 					}
 					else
 					{
