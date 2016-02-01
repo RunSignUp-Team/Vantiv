@@ -241,7 +241,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$payFacCredit = null;
 		foreach ($this->payFacCredits as &$payFacCredit)
 		{
-			$batchRequestXmls[] = '<payFacCredit reportGroup="rsu_credit">' . $this->buildXmlFromArray($payFacCredit) . '</payFacCredit>';
+			$batchRequestXmls[] = '<payFacCredit reportGroup="rsu_credit">' . $this->buildXmlFromArray($payFacCredit) . '</payFacCredit>' . "\n";
 			$payFacCreditAmount += $payFacCredit['amount'];
 		}
 		unset($payFacCredit);
@@ -252,7 +252,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$payFacDebit = null;
 		foreach ($this->payFacDebits as &$payFacDebit)
 		{
-			$batchRequestXmls[] = '<payFacDebit reportGroup="rsu_debit">' . $this->buildXmlFromArray($payFacDebit) . '</payFacDebit>';
+			$batchRequestXmls[] = '<payFacDebit reportGroup="rsu_debit">' . $this->buildXmlFromArray($payFacDebit) . '</payFacDebit>' . "\n";
 			$payFacDebitAmount += $payFacDebit['amount'];
 		}
 		unset($payFacDebit);
@@ -263,7 +263,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$submerchantCredit = null;
 		foreach ($this->submerchantCredits as &$submerchantCredit)
 		{
-			$batchRequestXmls[] = '<submerchantCredit reportGroup="funding_credit">' . $this->buildXmlFromArray($submerchantCredit) . '</submerchantCredit>';
+			$batchRequestXmls[] = '<submerchantCredit reportGroup="funding_credit">' . $this->buildXmlFromArray($submerchantCredit) . '</submerchantCredit>' . "\n";
 			$submerchantCreditAmount += $submerchantCredit['amount'];
 		}
 		unset($submerchantCredit);
@@ -274,7 +274,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$submerchantDebit = null;
 		foreach ($this->submerchantDebits as &$submerchantDebit)
 		{
-			$batchRequestXmls[] = '<submerchantDebit reportGroup="funding_debit">' . $this->buildXmlFromArray($submerchantDebit) . '</submerchantDebit>';
+			$batchRequestXmls[] = '<submerchantDebit reportGroup="funding_debit">' . $this->buildXmlFromArray($submerchantDebit) . '</submerchantDebit>' . "\n";
 			$submerchantDebitAmount += $submerchantDebit['amount'];
 		}
 		unset($submerchantDebit);
@@ -285,7 +285,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$physicalCheckCredit = null;
 		foreach ($this->physicalCheckCredits as &$physicalCheckCredit)
 		{
-			$batchRequestXmls[] = '<physicalCheckCredit reportGroup="funding_credit">' . $this->buildXmlFromArray($physicalCheckCredit) . '</physicalCheckCredit>';
+			$batchRequestXmls[] = '<physicalCheckCredit reportGroup="funding_credit">' . $this->buildXmlFromArray($physicalCheckCredit) . '</physicalCheckCredit>' . "\n";
 			$physicalCheckCreditAmount += $physicalCheckCredit['amount'];
 		}
 		unset($physicalCheckCredit);
@@ -296,7 +296,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$physicalCheckDebit = null;
 		foreach ($this->physicalCheckDebits as &$physicalCheckDebit)
 		{
-			$batchRequestXmls[] = '<physicalCheckDebit reportGroup="funding_debit">' . $this->buildXmlFromArray($physicalCheckDebit) . '</physicalCheckDebit>';
+			$batchRequestXmls[] = '<physicalCheckDebit reportGroup="funding_debit">' . $this->buildXmlFromArray($physicalCheckDebit) . '</physicalCheckDebit>' . "\n";
 			$physicalCheckDebitAmount += $physicalCheckDebit['amount'];
 		}
 		unset($physicalCheckDebit);
@@ -307,7 +307,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$reserveCredit = null;
 		foreach ($this->reserveCredits as &$reserveCredit)
 		{
-			$batchRequestXmls[] = '<reserveCredit reportGroup="reserve_credit">' . $this->buildXmlFromArray($reserveCredit) . '</reserveCredit>';
+			$batchRequestXmls[] = '<reserveCredit reportGroup="reserve_credit">' . $this->buildXmlFromArray($reserveCredit) . '</reserveCredit>' . "\n";
 			$reserveCreditAmount += $reserveCredit['amount'];
 		}
 		unset($reserveCredit);
@@ -318,7 +318,7 @@ class InstructionBasedFunding extends BatchTransaction
 		$reserveDebit = null;
 		foreach ($this->reserveDebits as &$reserveDebit)
 		{
-			$batchRequestXmls[] = '<reserveDebit reportGroup="reserve_debit">' . $this->buildXmlFromArray($reserveDebit) . '</reserveDebit>';
+			$batchRequestXmls[] = '<reserveDebit reportGroup="reserve_debit">' . $this->buildXmlFromArray($reserveDebit) . '</reserveDebit>' . "\n";
 			$reserveDebitAmount += $reserveDebit['amount'];
 		}
 		unset($reserveDebit);
