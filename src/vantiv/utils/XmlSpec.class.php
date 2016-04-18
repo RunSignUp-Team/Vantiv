@@ -60,7 +60,7 @@ class XmlSpec
 	 * Get default spec
 	 * @return XmlSpec Default spec
 	 */
-	public function getDefaultSpec()
+	public static function getDefaultSpec()
 	{
 		if (self::$defaultSpec === null)
 			self::$defaultSpec = new XmlSpec(0);
@@ -71,7 +71,7 @@ class XmlSpec
 	 * Get required spec
 	 * @return XmlSpec Spec
 	 */
-	public function getRequiredSpec()
+	public static function getRequiredSpec()
 	{
 		if (self::$requiredSpec === null)
 			self::$requiredSpec = new XmlSpec(self::XML_SPEC_REQUIRED);
@@ -82,7 +82,7 @@ class XmlSpec
 	 * Get int spec
 	 * @return XmlSpec Spec
 	 */
-	public function getIntSpec()
+	public static function getIntSpec()
 	{
 		if (self::$intSpec === null)
 			self::$intSpec = new XmlSpec(self::XML_SPEC_INT);
@@ -93,7 +93,7 @@ class XmlSpec
 	 * Get required int spec
 	 * @return XmlSpec Spec
 	 */
-	public function getRequiredIntSpec()
+	public static function getRequiredIntSpec()
 	{
 		if (self::$requiredIntSpec === null)
 			self::$requiredIntSpec = new XmlSpec(self::XML_SPEC_REQUIRED | self::XML_SPEC_INT);
@@ -104,7 +104,7 @@ class XmlSpec
 	 * Get bool spec
 	 * @return XmlSpec Spec
 	 */
-	public function getBoolSpec()
+	public static function getBoolSpec()
 	{
 		if (self::$boolSpec === null)
 			self::$boolSpec = new XmlSpec(self::XML_SPEC_BOOL);
@@ -115,7 +115,7 @@ class XmlSpec
 	 * Get required bool spec
 	 * @return XmlSpec Spec
 	 */
-	public function getRequiredBoolSpec()
+	public static function getRequiredBoolSpec()
 	{
 		if (self::$requiredBoolSpec === null)
 			self::$requiredBoolSpec = new XmlSpec(self::XML_SPEC_REQUIRED | self::XML_SPEC_BOOL);
