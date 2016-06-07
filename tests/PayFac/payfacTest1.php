@@ -139,6 +139,7 @@ try
 			'phone' => '5555555555'
 		),
 		'settlementCurrency' => 'USD',
+		'amexAcquired' => new XmlValue(array(), array('enabled' => true)),
 		
 		'url' => 'http://www.example.com',
 		'subMerchantFunding' => new XmlValue(array(

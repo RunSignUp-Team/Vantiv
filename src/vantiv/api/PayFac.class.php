@@ -193,8 +193,8 @@ class PayFac
 	protected function getRequestHttpHeaders()
 	{
 		return array(
-			'Content-Type: application/com.litle.psp-v10.1+xml',
-			'Accept: application/com.litle.psp-v10.1+xml'
+			'Content-Type: application/com.litle.psp-v11.1+xml',
+			'Accept: application/com.litle.psp-v11.1+xml'
 		);
 	}
 	
@@ -245,8 +245,8 @@ class PayFac
 			'annualCreditCardSalesVolume' => XmlSpec::getRequiredIntSpec(),
 			'hasAcceptedCreditCards' => new XmlSpec(XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL),
 			'address' => $this->requiredAddressSpec(),
-			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT),
-			'principals' => $this->principalsSpec($legalEntityType)
+			'principal' => $this->principalSpec($legalEntityType),
+			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT)
 		);
 	}
 	
@@ -276,12 +276,11 @@ class PayFac
 	protected function legalEntityUpdateRequestSpec($legalEntityType)
 	{
 		return array(
-			'doingBusinessAs' => XmlSpec::getDefaultSpec(),
+			'address' => $this->optionalAddressSpec(),
 			'contactPhone' => XmlSpec::getDefaultSpec(),
+			'doingBusinessAs' => XmlSpec::getDefaultSpec(),
 			'annualCreditCardSalesVolume' => new XmlSpec(XmlSpec::XML_SPEC_INT),
 			'hasAcceptedCreditCards' => new XmlSpec(XmlSpec::XML_SPEC_BOOL),
-			'address' => $this->optionalAddressSpec(),
-			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT),
 			'principal' => new XmlSpec(0, array(
 				'title' => XmlSpec::getDefaultSpec(),
 				'emailAddress' => XmlSpec::getDefaultSpec(),
@@ -289,7 +288,8 @@ class PayFac
 				'address' => $this->optionalAddressSpec(),
 				'backgroundCheckFields'=> $this->principalBackgroundCheckFieldsSpec()
 			)),
-			'backgroundCheckFields'=> $this->backgroundCheckFieldsSpec()
+			'backgroundCheckFields'=> $this->backgroundCheckFieldsSpec(),
+			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT)
 		);
 	}
 	
@@ -345,15 +345,15 @@ class PayFac
 	}
 	
 	/**
-	 * Get principals spec
+	 * Get principal spec
 	 *
 	 * @param string $legalEntityType Legal entity type
 	 *
 	 * @return array Spec
 	 */
-	protected function principalsSpec($legalEntityType)
+	protected function principalSpec($legalEntityType)
 	{
-		return new XmlSpec(XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_LIST, array(
+		return new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, array(
 			'title' => XmlSpec::getDefaultSpec(),
 			'firstName' => XmlSpec::getRequiredSpec(),
 			'lastName' => XmlSpec::getRequiredSpec(),
@@ -371,7 +371,7 @@ class PayFac
 				'postalCode' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
 				'countryCode' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
 			))
-		), 'principal');
+		));
 	}
 	
 	/**
@@ -414,14 +414,19 @@ class PayFac
 	protected function createSubmerchantXml(&$data)
 	{
 		$spec = array(
-			'pspMerchantId' => XmlSpec::getRequiredSpec(),
 			'merchantName' => XmlSpec::getRequiredSpec(),
+			'amexMid' => XmlSpec::getDefaultSpec(),
+			'discoverConveyedMid' => XmlSpec::getDefaultSpec(),
+			'url' => XmlSpec::getDefaultSpec(),
 			'customerServiceNumber' => XmlSpec::getRequiredSpec(),
 			'hardCodedBillingDescriptor' => XmlSpec::getRequiredSpec(),
 			'maxTransactionAmount' => XmlSpec::getRequiredIntSpec(),
+			'purchaseCurrency' => XmlSpec::getDefaultSpec(),
 			'merchantCategoryCode' => XmlSpec::getRequiredIntSpec(),
 			'bankRoutingNumber' => XmlSpec::getRequiredSpec(),
 			'bankAccountNumber' => XmlSpec::getRequiredSpec(),
+			'pspMerchantId' => XmlSpec::getRequiredSpec(),
+			'amexAcquired' => new XmlSpec(0, array(), null, array('enabled'=>XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL)),
 			'address' => $this->optionalAddressSpec(),
 			'primaryContact' => new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, array(
 				'firstName' => XmlSpec::getRequiredSpec(),
@@ -429,13 +434,6 @@ class PayFac
 				'emailAddress' => XmlSpec::getRequiredSpec(),
 				'phone' => XmlSpec::getRequiredSpec()
 			)),
-			'settlementCurrency' => XmlSpec::getRequiredSpec(),
-			
-			// Optional
-			'url' => XmlSpec::getDefaultSpec(),
-			'amexMid' => XmlSpec::getDefaultSpec(),
-			'discoverConveyedMid' => XmlSpec::getDefaultSpec(),
-			'purchaseCurrency' => XmlSpec::getDefaultSpec(),
 			'eCheck' => new XmlSpec(0, array(
 				'eCheckCompanyName' => XmlSpec::getDefaultSpec(),
 				'eCheckBillingDescriptor' => XmlSpec::getDefaultSpec()
@@ -443,9 +441,11 @@ class PayFac
 			'subMerchantFunding' => new XmlSpec(0, array(
 				'feeProfile' => XmlSpec::getDefaultSpec(),
 				'fundingSubmerchantId' => XmlSpec::getDefaultSpec()
-			), null, array('enabled'=>XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL))
+			), null, array('enabled'=>XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL)),
+			'settlementCurrency' => XmlSpec::getRequiredSpec()
 		);
 		$xml = Xml::generateXmlFromArray('subMerchantCreateRequest', self::XMLNS, $spec, $data);
+		
 		return $xml;
 	}
 	
@@ -458,6 +458,9 @@ class PayFac
 	protected function updateSubmerchantXml(&$data)
 	{
 		$spec = array(
+			'amexMid' => XmlSpec::getDefaultSpec(),
+			'discoverConveyedMid' => XmlSpec::getDefaultSpec(),
+			'url' => XmlSpec::getDefaultSpec(),
 			'customerServiceNumber' => XmlSpec::getDefaultSpec(),
 			'hardCodedBillingDescriptor' => XmlSpec::getDefaultSpec(),
 			'maxTransactionAmount' => XmlSpec::getIntSpec(),
@@ -470,9 +473,7 @@ class PayFac
 				'emailAddress' => XmlSpec::getDefaultSpec(),
 				'phone' => XmlSpec::getDefaultSpec()
 			)),
-			'url' => XmlSpec::getDefaultSpec(),
-			'amexMid' => XmlSpec::getDefaultSpec(),
-			'discoverConveyedMid' => XmlSpec::getDefaultSpec(),
+			'amexAcquired' => new XmlSpec(0, array(), null, array('enabled'=>XmlSpec::XML_SPEC_REQUIRED | XmlSpec::XML_SPEC_BOOL)),
 			'eCheck' => new XmlSpec(0, array(
 				'eCheckCompanyName' => XmlSpec::getDefaultSpec(),
 				'eCheckBillingDescriptor' => XmlSpec::getDefaultSpec()
