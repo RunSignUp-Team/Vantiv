@@ -27,7 +27,7 @@ class Vantiv
 	protected $connectTimeout = 20;
 	
 	/** Timeout */
-	protected $timeout = 45;
+	protected $timeout = 65;
 	
 	/**
    * Constructor
