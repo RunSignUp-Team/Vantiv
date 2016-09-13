@@ -248,7 +248,7 @@ class Vantiv
 				
 				// Check for error
 				if ($data['result'] !== CURLM_OK)
-					$rtn[$idx] = new VantivException(curl_error($data['handle']), curl_errno($data['handle']));
+					$rtn[$idx] = new VantivException(curl_error($data['handle']), $data['result']);
 				else
 				{
 					// Get curl response code
