@@ -8,7 +8,7 @@ use vantiv\utils\VantivException;
 
 try
 {
-	$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD);
+	$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD, VantivConfig::PROXY, VantivConfig::PROXY_USER_PSWD);
 	$onlineTransactionApi = new \vantiv\api\OnlineTransaction($vantivApi, VantivConfig::TRANSACTION_API_ENDPOINT);
 	$onlineTransactionApi->debug(true);
 	
