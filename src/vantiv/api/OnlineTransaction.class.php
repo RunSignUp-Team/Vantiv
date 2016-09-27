@@ -296,13 +296,6 @@ class OnlineTransaction
 			'customerIpAddress' => XmlSpec::getDefaultSpec(),
 			'authenticatedByMerchant' => XmlSpec::getBoolSpec()
 		));
-		$subspecs['pos'] = new XmlSpec(0, array(
-			'capability' => XmlSpec::getRequiredSpec(),
-			'entryMode' => XmlSpec::getRequiredSpec(),
-			'cardholderId' => XmlSpec::getRequiredSpec(),
-			'terminalId' => XmlSpec::getDefaultSpec(),
-			'catLevel' => XmlSpec::getRequiredSpec()
-		));
 		$subspecs['customBilling'] = new XmlSpec(0, array(
 			'phone' => XmlSpec::getDefaultSpec(),
 			'url' => XmlSpec::getDefaultSpec(),
