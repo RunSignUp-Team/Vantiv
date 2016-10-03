@@ -307,7 +307,10 @@ class Vantiv
 		$c8 = (int)substr($cardNum, 0, 8);
 		
 		// Mastercard
-		if (($c2 >= 51 && $c2 <= 55) && ($len === 16 || $len === 19))
+		if (
+			(($c2 >= 51 && $c2 <= 55) && ($len === 16 || $len === 19)) ||
+			(($c6 >= 222100 && $c6 <= 272099) && ($len === 16 || $len === 19))
+		)
 			$rtn ='MC';
 		// Visa
 		else if ($c1 === 4 && ($len === 16 || $len === 19))
