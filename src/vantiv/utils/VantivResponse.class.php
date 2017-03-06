@@ -42,7 +42,7 @@ class VantivResponse
 		{
 			$this->resp = new $classname($this->respStr);
 			if ($this->resp === false)
-				throw new VantivErrorException('Failed to parse response.');
+				throw new VantivErrorException('Failed to parse response.  HTTP status code was: ' . $this->statusCode);
 		}
 	}
 }
