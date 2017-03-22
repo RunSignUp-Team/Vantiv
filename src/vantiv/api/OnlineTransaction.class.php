@@ -85,6 +85,21 @@ class OnlineTransaction
 	}
 	
 	/**
+	 * Add auth transaction to batch
+	 *
+	 * @param VantivNonAtomicBatch Batch object
+	 * @param string $merchantId Merchant id
+	 * @param array $data Data
+	 * 
+	 * @throws VantivException
+	 */
+	public function addAuthToBatch(VantivNonAtomicBatch $batch, $merchantId, $data)
+	{
+		$xml = $this->createAuthXml($merchantId, $data);
+		$batch->addRequest($this->apiEndpoint, 'POST', $xml, $this->getRequestHttpHeaders(), '\vantiv\objs\VantivAuth');
+	}
+	
+	/**
 	 * Do Credit transaction
 	 *
 	 * @param string $merchantId Merchant id
@@ -335,6 +350,146 @@ class OnlineTransaction
 		));
 		
 		return $this->onlineRequestXml($merchantId, 'sale', $spec, $data);
+	}
+	
+	/**
+	 * Create auth XML
+	 *
+	 * @param string $merchantId Merchant id
+	 * @param array $data Data
+	 * @return string XML
+	 */
+	protected function createAuthXml($merchantId, &$data)
+	{
+		$subspecs = array(
+			'orderId' => XmlSpec::getRequiredSpec(),
+			'amount' => XmlSpec::getRequiredIntSpec(),
+			'orderSource' => XmlSpec::getRequiredSpec(),
+			
+			// Optional
+			'customerInfo' => new XmlSpec(0, array(
+				'ssn' => XmlSpec::getDefaultSpec(),
+				'dob' => XmlSpec::getDefaultSpec(),
+				'customerRegistrationDate' => XmlSpec::getDefaultSpec(),
+				'customerType' => XmlSpec::getDefaultSpec(),
+				'incomeAmount' => XmlSpec::getIntSpec(),
+				'employerName' => XmlSpec::getDefaultSpec(),
+				'customerWorkTelephone' => XmlSpec::getDefaultSpec(),
+				'residenceStatus' => XmlSpec::getDefaultSpec(),
+				'yearsAtResidence' => XmlSpec::getIntSpec(),
+				'yearsAtEmployer' => XmlSpec::getIntSpec()
+			)),
+			'billToAddress' => new XmlSpec(0, array(
+				'name' => XmlSpec::getDefaultSpec(),
+				'firstName' => XmlSpec::getDefaultSpec(),
+				'middleInitial' => XmlSpec::getDefaultSpec(),
+				'lastName' => XmlSpec::getDefaultSpec(),
+				'companyName' => XmlSpec::getDefaultSpec(),
+				'addressLine1' => XmlSpec::getDefaultSpec(),
+				'addressLine2' => XmlSpec::getDefaultSpec(),
+				'addressLine3' => XmlSpec::getDefaultSpec(),
+				'city' => XmlSpec::getDefaultSpec(),
+				'state' => XmlSpec::getDefaultSpec(),
+				'zip' => XmlSpec::getDefaultSpec(),
+				'country' => XmlSpec::getDefaultSpec(),
+				'email' => XmlSpec::getDefaultSpec(),
+				'phone' => XmlSpec::getDefaultSpec()
+			)),
+			'shipToAddress' => new XmlSpec(0, array(
+				'name' => XmlSpec::getDefaultSpec(),
+				'companyName' => XmlSpec::getDefaultSpec(),
+				'addressLine1' => XmlSpec::getDefaultSpec(),
+				'addressLine2' => XmlSpec::getDefaultSpec(),
+				'addressLine3' => XmlSpec::getDefaultSpec(),
+				'city' => XmlSpec::getDefaultSpec(),
+				'state' => XmlSpec::getDefaultSpec(),
+				'zip' => XmlSpec::getDefaultSpec(),
+				'country' => XmlSpec::getDefaultSpec(),
+				'email' => XmlSpec::getDefaultSpec(),
+				'phone' => XmlSpec::getDefaultSpec()
+			))
+		);
+		
+		// Check type
+		// mpos - Mobile Point of Sale
+		if (isset($data['mpos']))
+		{
+			$subspecs['mpos'] = new XmlSpec(0, array(
+					'ksn' => XmlSpec::getRequiredSpec(),
+					'formatId' => XmlSpec::getRequiredSpec(),
+					'encryptedTrack' => XmlSpec::getRequiredSpec(),
+					'track1Status' => XmlSpec::getRequiredIntSpec(),
+					'track2Status' => XmlSpec::getRequiredIntSpec()
+				));
+		}
+		// Assume credit card
+		else
+		{
+			// Check for card present
+			if (isset($data['card']['track']))
+			{
+				$subspecs['card'] = new XmlSpec(0, array(
+					'track' => XmlSpec::getRequiredSpec()
+				));
+			}
+			// Not present
+			else
+			{
+				$subspecs['card'] = new XmlSpec(0, array(
+					'type' => XmlSpec::getRequiredSpec(),
+					'number' => XmlSpec::getRequiredSpec(),
+					'expDate' => XmlSpec::getRequiredSpec(),
+					'cardValidationNum' => XmlSpec::getDefaultSpec()
+				));
+			}
+		}
+		
+		// $subspecs['billMeLaterRequest'] = ;// Not currenty supported
+		$subspecs['cardholderAuthentication'] = new XmlSpec(0, array(
+			'authenticationValue' => XmlSpec::getDefaultSpec(),
+			'authenticationTransactionId' => XmlSpec::getDefaultSpec(),
+			'customerIpAddress' => XmlSpec::getDefaultSpec(),
+			'authenticatedByMerchant' => XmlSpec::getBoolSpec()
+		));
+		$subspecs['customBilling'] = new XmlSpec(0, array(
+			'phone' => XmlSpec::getDefaultSpec(),
+			'url' => XmlSpec::getDefaultSpec(),
+			'city' => XmlSpec::getDefaultSpec(),
+			'descriptor' => XmlSpec::getDefaultSpec()
+		));
+		$subspecs['taxType'] = XmlSpec::getDefaultSpec();
+		//$subspecs['enhancedData'] = ;// Not currenty supported
+		$subspecs['processingInstructions'] = new XmlSpec(0, array(
+			'bypassVelocityCheck' => XmlSpec::getBoolSpec()
+		));
+		$subspecs['pos'] = new XmlSpec(0, array(
+			'capability' => XmlSpec::getDefaultSpec(),
+			'entryMode' => XmlSpec::getDefaultSpec(),
+			'cardholderId' => XmlSpec::getDefaultSpec(),
+			'terminalId' => XmlSpec::getDefaultSpec(),
+			'catLevel' => XmlSpec::getDefaultSpec()
+		));
+		//$subspecs['payPalOrderComplete'] = ;// Not currenty supported
+		$subspecs['amexAggregatorData'] = new XmlSpec(0, array(
+			'sellerId' => XmlSpec::getDefaultSpec(),
+			'sellerMerchantCategoryCode' => XmlSpec::getDefaultSpec()
+		));
+		$subspecs['allowPartialAuth'] = XmlSpec::getBoolSpec();
+		//$subspecs['healthcareIIAS'] = ;// Not currenty supported
+		$subspecs['merchantData'] = new XmlSpec(0, array(
+			'affiliate' => XmlSpec::getDefaultSpec(),
+			'campaign' => XmlSpec::getDefaultSpec(),
+			'merchantGroupingId' => XmlSpec::getDefaultSpec()
+		));
+		
+		// Create spec
+		$spec = new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, $subspecs, null, array(
+			'id' => 0,
+			'reportGroup' => XmlSpec::XML_SPEC_REQUIRED,
+			'customerId' => 0
+		));
+		
+		return $this->onlineRequestXml($merchantId, 'authorization', $spec, $data);
 	}
 	
 	/**
