@@ -17,7 +17,17 @@ class VantivSale extends VantivObj
 	{
 		return isset($this->saleResponse['litleTxnId']) ? $this->saleResponse['litleTxnId'] : null;
 	}
-	
+
+	/**
+	 * Check if a duplicate was detected
+	 *
+	 * @return bool True if a duplicate
+	 */
+	public function isDuplicate()
+	{
+		return isset($this->xmlAttrs['saleResponse']['duplicate']) && $this->xmlAttrs['saleResponse']['duplicate'] === 'true';
+	}
+
 	/**
 	 * Get response code
 	 *
@@ -45,6 +55,6 @@ class VantivSale extends VantivObj
 	 */
 	public function wasSuccessful()
 	{
-		return $this->getResponse() === VantivResponseCodes::TRANS_RESP_CODE_APPROVED;
+		return $this->getResponse() === VantivResponseCodes::TRANS_RESP_CODE_APPROVED && !$this->isDuplicate();
 	}
 }

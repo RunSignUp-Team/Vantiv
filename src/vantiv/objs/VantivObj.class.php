@@ -11,7 +11,10 @@ class VantivObj
 {
 	/** XML Error */
 	private $xmlError = null;
-	
+
+	/** XML Attributes */
+	protected $xmlAttrs = [];
+
 	/**
 	 * Constructor
 	 *
@@ -32,8 +35,12 @@ class VantivObj
 	 * @param SimpleXMLElement $elem SimpleXML Element
 	 * @param array $destArr Destination array
 	 */
-	protected function parseSimpleXmlElem($elem, array &$destArr = null)
+	protected function parseSimpleXmlElem($elem, array &$destArr = null, array &$destXmlAttrs = null)
 	{
+		// Set up $destXmlAttrs
+		if ($destXmlAttrs === null)
+			$destXmlAttrs = &$this->xmlAttrs;
+
 		$arrayifiedElems = array();
 		foreach ($elem as $key=>$node)
 		{
@@ -48,7 +55,10 @@ class VantivObj
 			else
 			{
 				$val = array();
-				$this->parseSimpleXmlElem($node, $val);
+				$xmlAttrs = array();
+				$this->parseSimpleXmlElem($node, $val, $xmlAttrs);
+				if (!empty($xmlAttrs))
+					$destXmlAttrs[$key] = $xmlAttrs;
 			}
 			
 			// Add value
@@ -81,6 +91,10 @@ class VantivObj
 				else
 					$this->$key = $val;
 			}
+
+			// Add attributes
+			foreach ($node->attributes() as $attr=>$attrVal)
+				$destXmlAttrs[$key][$attr] = (string)$attrVal;
 		}
 	}
 }

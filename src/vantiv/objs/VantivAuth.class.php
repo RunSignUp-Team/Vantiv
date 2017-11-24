@@ -17,7 +17,17 @@ class VantivAuth extends VantivObj
 	{
 		return isset($this->authorizationResponse['litleTxnId']) ? $this->authorizationResponse['litleTxnId'] : null;
 	}
-	
+
+	/**
+	 * Check if a duplicate was detected
+	 *
+	 * @return bool True if a duplicate
+	 */
+	public function isDuplicate()
+	{
+		return isset($this->xmlAttrs['authorizationResponse']['duplicate']) && $this->xmlAttrs['authorizationResponse']['duplicate'] === 'true';
+	}
+
 	/**
 	 * Get response code
 	 *
@@ -45,6 +55,6 @@ class VantivAuth extends VantivObj
 	 */
 	public function wasSuccessful()
 	{
-		return $this->getResponse() === VantivResponseCodes::TRANS_RESP_CODE_APPROVED;
+		return $this->getResponse() === VantivResponseCodes::TRANS_RESP_CODE_APPROVED && !$this->isDuplicate();
 	}
 }
