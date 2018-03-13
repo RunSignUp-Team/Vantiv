@@ -1,6 +1,6 @@
 <?php
 
-/* Copyright: Bickel Advisory Services, LLC. */
+/** Copyright: RunSignUp, Inc. */
 
 namespace vantiv\utils;
 
