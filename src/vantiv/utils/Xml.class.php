@@ -187,7 +187,7 @@ class Xml
 					// No data
 					else
 					{
-						// Is their field data?
+						// Is there field data?
 						if ($fieldStr !== '')
 						{
 							// Check if attribute is required
@@ -199,7 +199,7 @@ class Xml
 			}
 			
 			// Add if not empty
-			if ($fieldStr !== '' || $attrStr !== '')
+			if ($fieldStr !== '' || $attrStr !== '' || ($spec->flags & XmlSpec::XML_SPEC_INCLUDE_NULL))
 				$str .= '<'.$key.$attrStr.'>' . $fieldStr . '</'.$key.'>';
 		}
 		

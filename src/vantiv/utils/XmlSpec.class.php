@@ -15,7 +15,8 @@ class XmlSpec
 	const XML_SPEC_BOOL =				0x00000002;
 	const XML_SPEC_INT =				0x00000004;
 	const XML_SPEC_LIST =				0x00000008;	// Only applicable with subspecs
-	
+	const XML_SPEC_INCLUDE_NULL =	0x00000010;
+
 	/** Sub-specs */
 	public $subspecs = null;
 	

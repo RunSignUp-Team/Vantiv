@@ -82,7 +82,8 @@ class VantivObj
 			{
 				if (property_exists($this, $key))
 				{
-					if (!is_array($this->$key))
+					// Is it an array yet?
+					if (!is_array($this->$key) || !array_key_exists(0, $this->$key))
 						$this->$key = array($this->$key);
 					$tmp = &$this->$key;
 					$tmp[] = $val;

@@ -24,7 +24,7 @@ class PayFac
 	protected $lastResponseData = null;
 	
 	/** XMLNS */
-	const XMLNS = 'http://psp.litle.com/api/merchant/onboard';
+	const XMLNS = 'http://payfac.vantivcnp.com/api/merchant/onboard';
 	
 	/**
 	 * Constructor
@@ -100,7 +100,45 @@ class PayFac
 		$this->debugInfo();
 		return $resp->resp;
 	}
-	
+
+	/**
+	 * Create a principal
+	 *
+	 * @param string $legalEntityId Legal entity id
+	 * @param string $legalEntityType Legal entity type
+	 * @param array $data Data
+	 *
+	 * @return \vantiv\objs\VantivLegalEntityPrincipalCreateResponse
+	 * @throws VantivException
+	 */
+	public function createPrincipal($legalEntityId, $legalEntityType, $data)
+	{
+		$xml = $this->createPrincipalXml($data, $legalEntityType);
+		$url = $this->apiEndpoint . '/legalentity/'.$legalEntityId.'/principal';
+		$resp = $this->vantiv->makeBasicAuthRequest($url, 'POST', $xml, $this->getRequestHttpHeaders(), '\vantiv\objs\VantivLegalEntityPrincipalCreateResponse');
+		$this->lastResponseData = $resp;
+		$this->debugInfo();
+		return $resp->resp;
+	}
+
+	/**
+	 * Delete a principal
+	 *
+	 * @param string $legalEntityId Legal entity id
+	 * @param string $principalId Principal ID
+	 *
+	 * @return \vantiv\objs\VantivLegalEntityPrincipalCreateResponse
+	 * @throws VantivException
+	 */
+	public function deletePrincipal($legalEntityId, $principalId)
+	{
+		$url = $this->apiEndpoint . '/legalentity/'.$legalEntityId.'/principal/'.$principalId;
+		$resp = $this->vantiv->makeBasicAuthRequest($url, 'DELETE', null, $this->getRequestHttpHeaders(), '\vantiv\objs\VantivLegalEntityPrincipalDeleteResponse');
+		$this->lastResponseData = $resp;
+		$this->debugInfo();
+		return $resp->resp;
+	}
+
 	/**
 	 * Create SubMerchant
 	 *
@@ -193,8 +231,8 @@ class PayFac
 	protected function getRequestHttpHeaders()
 	{
 		return array(
-			'Content-Type: application/com.litle.psp-v11.1+xml',
-			'Accept: application/com.litle.psp-v11.1+xml'
+			'Content-Type: application/com.vantivcnp.payfac-v13+xml',
+			'Accept: application/com.vantivcnp.payfac-v13+xml'
 		);
 	}
 	
@@ -240,6 +278,7 @@ class PayFac
 			'legalEntityName' => XmlSpec::getRequiredSpec(),
 			'legalEntityType' => XmlSpec::getRequiredSpec(),
 			'doingBusinessAs' => XmlSpec::getDefaultSpec(),
+			'legalEntityOwnershipType' => XmlSpec::getRequiredSpec(),
 			'taxId' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getDefaultSpec() : XmlSpec::getRequiredSpec(),
 			'contactPhone' => XmlSpec::getDefaultSpec(),
 			'annualCreditCardSalesVolume' => XmlSpec::getRequiredIntSpec(),
@@ -265,7 +304,21 @@ class PayFac
 		$xml = Xml::generateXmlFromArray('legalEntityUpdateRequest', self::XMLNS, $spec, $data);
 		return $xml;
 	}
-	
+
+	/**
+	 * Create Legal Entity Principal XML
+	 *
+	 * @param array $data Data
+	 * @param string $legalEntityType Legal entity type
+	 * @return string XML
+	 */
+	protected function createPrincipalXml(&$data, $legalEntityType)
+	{
+		$spec = ['principal' => $this->principalSpec($legalEntityType)];
+		$xml = Xml::generateXmlFromArray('legalEntityPrincipalCreateRequest', self::XMLNS, $spec, $data);
+		return $xml;
+	}
+
 	/**
 	 * Get legalEntityUpdateRequestSpec spec
 	 *
@@ -282,10 +335,12 @@ class PayFac
 			'annualCreditCardSalesVolume' => new XmlSpec(XmlSpec::XML_SPEC_INT),
 			'hasAcceptedCreditCards' => new XmlSpec(XmlSpec::XML_SPEC_BOOL),
 			'principal' => new XmlSpec(0, array(
+				'principalId' => new XmlSpec(XmlSpec::XML_SPEC_INCLUDE_NULL | XmlSpec::XML_SPEC_INT),
 				'title' => XmlSpec::getDefaultSpec(),
 				'emailAddress' => XmlSpec::getDefaultSpec(),
 				'contactPhone' => XmlSpec::getDefaultSpec(),
 				'address' => $this->optionalAddressSpec(),
+				'stakePercent' => new XmlSpec(XmlSpec::XML_SPEC_INT),
 				'backgroundCheckFields'=> $this->principalBackgroundCheckFieldsSpec()
 			)),
 			'backgroundCheckFields'=> $this->backgroundCheckFieldsSpec(),
@@ -354,6 +409,7 @@ class PayFac
 	protected function principalSpec($legalEntityType)
 	{
 		return new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, array(
+			'principalId' => new XmlSpec(XmlSpec::XML_SPEC_INCLUDE_NULL | XmlSpec::XML_SPEC_INT),
 			'title' => XmlSpec::getDefaultSpec(),
 			'firstName' => XmlSpec::getRequiredSpec(),
 			'lastName' => XmlSpec::getRequiredSpec(),
@@ -369,8 +425,9 @@ class PayFac
 				'city' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
 				'stateProvince' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
 				'postalCode' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
-				'countryCode' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec(),
-			))
+				'countryCode' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getRequiredSpec() : XmlSpec::getDefaultSpec()
+			)),
+			'stakePercent' => new XmlSpec(XmlSpec::XML_SPEC_INT)
 		));
 	}
 	
