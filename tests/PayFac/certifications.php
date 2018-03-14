@@ -237,7 +237,7 @@ class VantivCertifications
 				}
 				else
 				{
-					print("Waiting for Vantiv to update entity.  Current response: {$resp->responseCode} - {$resp->responseDescription} \n");
+					print(date('m/d/Y g:i:sa') . ": Waiting for Vantiv to update entity.  Current response: {$resp->responseCode} - {$resp->responseDescription} \n");
 					sleep(120);
 				}
 			} while ($waiting);
@@ -253,7 +253,7 @@ class VantivCertifications
 	/** Run legal entity certification test 2b. */
 	public function runRetrieveLegalEntityCertificationTest2b()
 	{
-		print("Retrieve legal entity test #2b:\n");
+		print("Update legal entity test #2b:\n");
 		try
 		{
 			$resp = $this->payFacApi->updateLegalEntity($this->testRespData[1], array(
