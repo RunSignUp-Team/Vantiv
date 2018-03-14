@@ -34,6 +34,6 @@ class VantivLegalEntityPrincipalCreateResponse extends VantivObj
 	 */
 	public function getPrincipalId()
 	{
-		return isset($this->principalId) ? (int)$this->principalId : null;
+		return isset($this->principal['principalId']) ? (int)$this->principal['principalId'] : null;
 	}
 }

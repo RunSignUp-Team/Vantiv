@@ -936,7 +936,137 @@ class VantivCertifications
 			print_r($e);
 		}
 	}
+
+	/** Run Principal Certifications */
+	public function runPrincipalCertifications()
+	{
+		$legalEntityId = null;
+		print("Create legal entity:\n");
+		try
+		{
+			$resp = $this->payFacApi->createLegalEntity(array(
+				'legalEntityName' => 'Legal Entity Name',
+				'legalEntityType' => 'CORPORATION',
+				'legalEntityOwnershipType' => 'PRIVATE',
+				'doingBusinessAs' => 'Alternate Business Nsame',
+				'taxId' => $this->generateRandomTaxId(),
+				'contactPhone' => '7817659800',
+				'annualCreditCardSalesVolume' => 800000,
+				'hasAcceptedCreditCards' => true,
+				'address' => array(
+					'streetAddress1' => '900 Chelmsford St',
+					'streetAddress2' => 'Street Address 2',
+					'city' => 'City',
+					'stateProvince' => 'MA',
+					'postalCode' => '01730',
+					'countryCode' => 'USA'
+				),
+				'yearsInBusiness' => 12,
+				'principal' => array(
+					'principalId' => 1,
+					'title' => 'Chief Financial Officer',
+					'firstName' => 'p first',
+					'lastName' => 'p last',
+					'emailAddress' => 'emailAddress',
+					'ssn' => $this->generateRandomTaxId(),
+					'contactPhone' => '7817659800',
+					'dateOfBirth' => '1980-10-12',
+					'driversLicense' => '892327409832',
+					'driversLicenseState' => 'MA',
+					'address' => array(
+						'streetAddress1' => 'Street Address 1',
+						'streetAddress2' => 'Street Address 2',
+						'city' => 'City',
+						'stateProvince' => 'MA',
+						'postalCode' => '01730',
+						'countryCode' => 'USA'
+					),
+					'stakePercent' => 20
+				)
+			));
+
+			// Check for success
+			if ($resp->responseCode == '10' && $resp->responseDescription == 'Approved')
+			{
+				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
+				print("Legal entity ID: " . $resp->legalEntityId . "\n");
+				$legalEntityId = $resp->legalEntityId;
+			}
+			else
+			{
+				print("Unexpected response:\n");
+				print_r($resp);
+			}
+		} catch (\vantiv\utils\InvalidRequestException $e) {
+			print("InvalidRequestException:\n");
+			print_r($e->error);
+		} catch (\vantiv\utils\VantivException $e) {
+			print("VantivException:\n");
+			print_r($e);
+		}
+
+		// Add principals
+		if ($legalEntityId !== null)
+		{
+			$principalIds = [];
+			for ($i = 2; $i <= 5; $i++)
+			{
+				print("Adding principal #{$i}:\n");
+				$ownerApiData = ['principal' => [
+					'principalId' => $i,
+					'firstName' => 'p first ' . $i,
+					'lastName' => 'p last ' . $i,
+					'title' => 'Title ' . $i,
+					'ssn' => str_repeat($i, 9),
+					'dateOfBirth' => '1990-01-01',
+					'address' => [
+						'streetAddress1' => 'Street Address 1',
+						'streetAddress2' => 'Street Address 2',
+						'city' => 'City',
+						'stateProvince' => 'MA',
+						'postalCode' => '01730',
+						'countryCode' => 'USA'
+					],
+					'stakePercent' => 20
+				]];
+				$resp = $this->payFacApi->createPrincipal($legalEntityId, 'CORPORATION', $ownerApiData);
+				if ($resp->principal['responseCode'] == '10' && $resp->principal['responseDescription'] == 'Approved')
+				{
+					print("Successful\n");
+					// Vantiv Documentation seems wrong.  It alternates between principalCreateResponse and legalEntityPrincipalCreateResponse and there's no transaction ID
+					// print("Transaction ID: " . $resp->transactionId . "\n");
+					print("Principal ID: " . $resp->getPrincipalId() . "\n");
+					$principalIds[] = $resp->getPrincipalId();
+				}
+				else
+				{
+					print("Unexpected response:\n");
+					print_r($resp);
+				}
+			}
+
+			// Delete a principal
+			if (!empty($principalIds))
+			{
+				$principalId = reset($principalIds);
+				print("Removing principal with ID {$principalId}:\n");
+				$resp = $this->payFacApi->deletePrincipal($legalEntityId, $principalId);
+				if ($resp->responseDescription == 'Legal Entity Principal successfully deleted')
+				{
+					print("Successful\n");
+					print("Transaction ID: " . $resp->transactionId . "\n");
+				}
+				else
+				{
+					print("Unexpected response:\n");
+					print_r($resp);
+				}
+			}
+		}
+	}
 }
 
 $vantivCertifications = new VantivCertifications();
 $vantivCertifications->runCertifications();
+//$vantivCertifications->runPrincipalCertifications();
