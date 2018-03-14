@@ -277,8 +277,8 @@ class PayFac
 		return array(
 			'legalEntityName' => XmlSpec::getRequiredSpec(),
 			'legalEntityType' => XmlSpec::getRequiredSpec(),
-			'doingBusinessAs' => XmlSpec::getDefaultSpec(),
 			'legalEntityOwnershipType' => XmlSpec::getRequiredSpec(),
+			'doingBusinessAs' => XmlSpec::getDefaultSpec(),
 			'taxId' => ($legalEntityType === 'INDIVIDUAL_SOLE_PROPRIETORSHIP') ? XmlSpec::getDefaultSpec() : XmlSpec::getRequiredSpec(),
 			'contactPhone' => XmlSpec::getDefaultSpec(),
 			'annualCreditCardSalesVolume' => XmlSpec::getRequiredIntSpec(),

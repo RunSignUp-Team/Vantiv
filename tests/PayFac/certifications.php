@@ -14,15 +14,15 @@ class VantivCertifications
 	
 	/** Test response data */
 	private $testRespData = array();
-	
+
+	/** Test data */
+	private $testData = array();
+
 	/** Constructor */
 	public function __construct()
 	{
-		$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD);
-		
-		// TODO: Remove
-		$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD, VantivConfig::PROXY, VantivConfig::PROXY_PASS);
-		
+		$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD, VantivConfig::PROXY, VantivConfig::PROXY_USER_PSWD);
+
 		$this->payFacApi = new \vantiv\api\PayFac($vantivApi, VantivConfig::SUBMERCHANT_API_ENDPOINT);
 		//$this->payFacApi->debug(true);
 	}
@@ -69,6 +69,10 @@ class VantivCertifications
 		$this->runRetrieveSubmerchantCertificationTest15();
 		print("\n" . str_repeat('-', 80) . "\n\n");
 		$this->runRetrieveSubmerchantCertificationTest16();
+		print("\n" . str_repeat('-', 80) . "\n\n");
+		$this->runRetrieveLegalEntityCertificationTest2a();
+		print("\n" . str_repeat('-', 80) . "\n\n");
+		$this->runRetrieveLegalEntityCertificationTest2b();
 	}
 	
 	/** Run create legal entity certification test 1 */
@@ -80,6 +84,7 @@ class VantivCertifications
 			$resp = $this->payFacApi->createLegalEntity(array(
 				'legalEntityName' => 'Legal Entity Name',
 				'legalEntityType' => 'INDIVIDUAL_SOLE_PROPRIETORSHIP',
+				'legalEntityOwnershipType' => 'PRIVATE',
 				'doingBusinessAs' => 'Alternate Business Nsame',
 				'taxId' => $this->generateRandomTaxId(),
 				'contactPhone' => '7817659800',
@@ -95,6 +100,7 @@ class VantivCertifications
 				),
 				'yearsInBusiness' => 12,
 				'principal' => array(
+					'principalId' => 1,
 					'title' => 'Chief Financial Officer',
 					'firstName' => 'p first',
 					'lastName' => 'p last',
@@ -111,7 +117,8 @@ class VantivCertifications
 						'stateProvince' => 'MA',
 						'postalCode' => '01730',
 						'countryCode' => 'USA'
-					)
+					),
+					'stakePercent' => 100
 				)
 			));
 			
@@ -119,6 +126,7 @@ class VantivCertifications
 			if ($resp->responseCode == '10' && $resp->responseDescription == 'Approved')
 			{
 				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
 				print("Legal entity ID: " . $resp->legalEntityId . "\n");
 				$this->testRespData[1] = $resp->legalEntityId;
 			}
@@ -142,11 +150,16 @@ class VantivCertifications
 		print("Create legal entity test #2:\n");
 		try
 		{
+			$this->testData[2] = [
+				'taxId' => $this->generateRandomTaxId(),
+				'ssn' => $this->generateRandomTaxId()
+			];
 			$resp = $this->payFacApi->createLegalEntity(array(
 				'legalEntityName' => 'Legal Entity Name',
 				'legalEntityType' => 'INDIVIDUAL_SOLE_PROPRIETORSHIP',
+				'legalEntityOwnershipType' => 'PRIVATE',
 				'doingBusinessAs' => 'Alternate Business Nsame',
-				'taxId' => $this->generateRandomTaxId(),
+				'taxId' => $this->testData[2]['taxId'],
 				'contactPhone' => '7817659800',
 				'annualCreditCardSalesVolume' => 800000,
 				'hasAcceptedCreditCards' => true,
@@ -160,11 +173,12 @@ class VantivCertifications
 				),
 				'yearsInBusiness' => 12,
 				'principal' => array(
+					'principalId' => 1,
 					'title' => 'Chief Financial Officer',
 					'firstName' => 'p first',
 					'lastName' => 'p last',
 					'emailAddress' => 'emailAddress',
-					'ssn' => $this->generateRandomTaxId(),
+					'ssn' => $this->testData[2]['ssn'],
 					'contactPhone' => '7817659800',
 					'dateOfBirth' => '1980-10-12',
 					'driversLicense' => '892327409832',
@@ -176,7 +190,8 @@ class VantivCertifications
 						'stateProvince' => 'MA',
 						'postalCode' => '01730',
 						'countryCode' => 'USA'
-					)
+					),
+					'stakePercent' => 100
 				)
 			));
 			
@@ -184,6 +199,7 @@ class VantivCertifications
 			if ($resp->responseCode == '20' && $resp->responseDescription == 'Manual Review')
 			{
 				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
 				print("Legal entity ID: " . $resp->legalEntityId . "\n");
 				$this->testRespData[2] = $resp->legalEntityId;
 			}
@@ -200,7 +216,100 @@ class VantivCertifications
 			print_r($e);
 		}
 	}
-	
+
+	/** Run legal entity certification test 2a. */
+	public function runRetrieveLegalEntityCertificationTest2a()
+	{
+		print("Retrieve legal entity test #2a:\n");
+		try
+		{
+			$waiting = true;
+			do
+			{
+				$resp = $this->payFacApi->retrieveLegalEntity($this->testRespData[2]);
+				// Check for success
+				if ($resp->responseCode == '30' && $resp->responseDescription == 'Retry')
+				{
+					print("Successful\n");
+					print("Transaction ID: " . $resp->transactionId . "\n");
+					print("Notes: " . $resp->backgroundCheckDecisionNotes . "\n");
+					$waiting = false;
+				}
+				else
+				{
+					print("Waiting for Vantiv to update entity.  Current response: {$resp->responseCode} - {$resp->responseDescription} \n");
+					sleep(120);
+				}
+			} while ($waiting);
+		} catch (\vantiv\utils\InvalidRequestException $e) {
+			print("InvalidRequestException:\n");
+			print_r($e->error);
+		} catch (\vantiv\utils\VantivException $e) {
+			print("VantivException:\n");
+			print_r($e);
+		}
+	}
+
+	/** Run legal entity certification test 2b. */
+	public function runRetrieveLegalEntityCertificationTest2b()
+	{
+		print("Retrieve legal entity test #2b:\n");
+		try
+		{
+			$resp = $this->payFacApi->updateLegalEntity($this->testRespData[1], array(
+				'address' => array(
+					'streetAddress1' => '900 Chelmsford St',
+					'streetAddress2' => 'Street Address 2',
+					'city' => 'City',
+					'stateProvince' => 'MA',
+					'postalCode' => '01730',
+					'countryCode' => 'USA'
+				),
+				'principal' => array(
+					'principalId' => 1,
+					'title' => 'Chief Financial Officer',
+					'emailAddress' => 'emailAddress',
+					'contactPhone' => '7817659800',
+					'address' => array(
+						'streetAddress1' => 'Street Address 1',
+						'streetAddress2' => 'Street Address 2',
+						'city' => 'City',
+						'stateProvince' => 'MA',
+						'postalCode' => '01730',
+						'countryCode' => 'USA'
+					),
+					'stakePercent' => 100,
+					'backgroundCheckFields' => array(
+						'firstName' => 'p first',
+						'lastName' => 'p last',
+						'ssn' => $this->testData[2]['ssn'],
+						'dateOfBirth' => '1980-10-12',
+						'driversLicense' => '892327409832',
+						'driversLicenseState' => 'MA'
+					)
+				)
+			));
+			// Check for success
+			if ($resp->responseCode == '10' && $resp->responseDescription == 'Approved')
+			{
+				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
+				$waiting = false;
+			}
+			else
+			{
+				print("Unexpected response:\n");
+				print_r($resp);
+			}
+		} catch (\vantiv\utils\InvalidRequestException $e) {
+			print("InvalidRequestException:\n");
+			print_r($e->error);
+		} catch (\vantiv\utils\VantivException $e) {
+			print("VantivException:\n");
+			print_r($e);
+		}
+	}
+
 	/** Run create legal entity certification test 3 */
 	public function runCreateLegalEntityCertificationTest3()
 	{
@@ -210,6 +319,7 @@ class VantivCertifications
 			$resp = $this->payFacApi->createLegalEntity(array(
 				'legalEntityName' => 'Legal Entity Name',
 				'legalEntityType' => 'LIMITED_LIABILITY_COMPANY',
+				'legalEntityOwnershipType' => 'PRIVATE',
 				'doingBusinessAs' => 'Alternate Business Nsame',
 				'taxId' => $this->generateRandomTaxId(),
 				'contactPhone' => '7817659800',
@@ -225,6 +335,7 @@ class VantivCertifications
 				),
 				'yearsInBusiness' => 12,
 				'principal' => array(
+					'principalId' => 1,
 					'title' => 'Chief Financial Officer',
 					'firstName' => 'p first',
 					'lastName' => 'p last',
@@ -241,7 +352,8 @@ class VantivCertifications
 						'stateProvince' => 'MA',
 						'postalCode' => '01730',
 						'countryCode' => 'USA'
-					)
+					),
+					'stakePercent' => 100
 				)
 			));
 			
@@ -249,6 +361,7 @@ class VantivCertifications
 			if ($resp->responseCode == '10' && $resp->responseDescription == 'Approved')
 			{
 				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
 				print("Legal entity ID: " . $resp->legalEntityId . "\n");
 			}
 			else
@@ -279,10 +392,34 @@ class VantivCertifications
 					'stateProvince' => 'MA',
 					'postalCode' => '01730',
 					'countryCode' => 'USA'
+				),
+				'principal' => array(
+					'principalId' => 1,
+					'title' => 'Chief Financial Officer',
+					'emailAddress' => 'emailAddress',
+					'contactPhone' => '7817659800',
+					'address' => array(
+						'streetAddress1' => 'Street Address 1',
+						'streetAddress2' => 'Street Address 2',
+						'city' => 'City',
+						'stateProvince' => 'MA',
+						'postalCode' => '01730',
+						'countryCode' => 'USA'
+					),
+					'stakePercent' => 100,
+					'backgroundCheckFields' => array(
+						'firstName' => 'p first',
+						'lastName' => 'p last',
+						'ssn' => $this->generateRandomTaxId(),
+						'dateOfBirth' => '1980-10-12',
+						'driversLicense' => '892327409832',
+						'driversLicenseState' => 'MA'
+					)
 				)
 			));
 			
 			// Output legal entity ID
+			print("Transaction ID: " . $resp->transactionId . "\n");
 			print("Legal entity ID: " . $resp->legalEntityId . "\n");
 		} catch (\vantiv\utils\InvalidRequestException $e) {
 			print("InvalidRequestException:\n");
@@ -315,7 +452,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -342,6 +482,7 @@ class VantivCertifications
 			if ($resp->responseCode == '20' && $resp->responseDescription == 'Manual Review')
 			{
 				print("Successful\n");
+				print("Transaction ID: " . $resp->transactionId . "\n");
 				print("Legal entity ID: " . $resp->legalEntityId . "\n");
 				$this->testRespData[2] = $resp->legalEntityId;
 			}
@@ -372,7 +513,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -427,6 +571,7 @@ class VantivCertifications
 			
 			// Check for success
 			print("Successful\n");
+			print("Transaction ID: " . $resp->transactionId . "\n");
 			print("Submerchant ID: " . $resp->getSubMerchantId() . "\n");
 			$this->testRespData[8] = $resp->getSubMerchantId();
 		} catch (\vantiv\utils\InvalidRequestException $e) {
@@ -481,7 +626,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -539,7 +687,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -587,6 +738,7 @@ class VantivCertifications
 			
 			// Check for success
 			print("Successful\n");
+			print("Transaction ID: " . $resp->transactionId . "\n");
 		} catch (\vantiv\utils\InvalidRequestException $e) {
 			print("InvalidRequestException:\n");
 			print_r($e->error);
@@ -632,7 +784,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -683,7 +838,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -706,6 +864,7 @@ class VantivCertifications
 		{
 			$resp = $this->payFacApi->retrieveSubMerchant($this->testRespData[1], $this->testRespData[8]);
 			print("Successful\n");
+			print("Transaction ID: " . $resp->transactionId . "\n");
 			print("Merchant Ident String: " . $resp->merchantIdentString . "\n");
 		} catch (\vantiv\utils\InvalidRequestException $e) {
 			print("InvalidRequestException:\n");
@@ -729,7 +888,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");
@@ -757,7 +919,10 @@ class VantivCertifications
 			print_r($resp);
 		} catch (\vantiv\utils\VantivErrorException $e) {
 			if ($e->getCode() == 400)
+			{
 				print("Successful\n");
+				print("Transaction ID: " . $e->errorResp->transactionId . "\n");
+			}
 			else
 			{
 				print("VantivErrorException:\n");

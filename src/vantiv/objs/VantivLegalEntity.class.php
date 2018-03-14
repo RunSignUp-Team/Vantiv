@@ -15,8 +15,9 @@ class VantivLegalEntity extends VantivObj
 	 *
 	 * @param SimpleXMLElement $elem SimpleXML Element
 	 * @param array $destArr Destination array
+	 * @param array Destination XML attributes
 	 */
-	protected function parseSimpleXmlElem($elem, array &$destArr = null)
+	protected function parseSimpleXmlElem($elem, array &$destArr = null, array &$destXmlAttrs = null)
 	{
 		// If root element, check for duplicate create request
 		if ($destArr === null)
