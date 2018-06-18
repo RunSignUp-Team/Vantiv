@@ -340,9 +340,16 @@ class Vantiv
 		) && ($len === 14 || $len === 16))
 			$rtn ='DI';
 		// JCB
-		else if ($c2 === 35 && $len == 16)	// Note: This must be after Discover
+		else if (
+			($c2 === 35 && $len == 16) || // Note: This must be after Discover
+			($c8 >= 30880000 && $c8 <= 30949999) ||
+			($c8 >= 30960000 && $c8 <= 31029999) ||
+			($c8 >= 31120000 && $c8 <= 31209999) ||
+			($c8 >= 31580000 && $c8 <= 31599999) ||
+			($c8 >= 33370000 && $c8 <= 33499999)
+		)
 			$rtn = 'JC';
-		
+
 		return $rtn;
 	}
 }
