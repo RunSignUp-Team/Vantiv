@@ -43,6 +43,8 @@ class VantivResponseCodes
 	CONST LEGAL_ENTITY_RESP_CODE_DUPLICATE = 36;
 	/** Legal Entity Declined */
 	const LEGAL_ENTITY_RESP_CODE_DECLINED = 40;
+	/** Legal Entity Manual Review - Endpoint Down Error */
+	const LEGAL_ENTITY_RESP_CODE_MANUAL_REVIEW_ENDPOINT_DOWN_ERR = 98;
 	/** Legal Entity Manual Review Background Check Error */
 	const LEGAL_ENTITY_RESP_CODE_MANUAL_REVIEW_BG_CHECK_ERR = 99;
 	
