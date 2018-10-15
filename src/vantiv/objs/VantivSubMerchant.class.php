@@ -69,4 +69,14 @@ class VantivSubMerchant extends VantivObj
 		// According to Mike Olson, we should use merchantIdentString.
 		return $this->getMerchantIdentString();
 	}
+
+	/**
+	 * Check if Amex OptBlue
+	 *
+	 * @return bool True if OptBlue
+	 */
+	public function isAmexOptBlue()
+	{
+		return isset($this->xmlAttrs['amexAcquired']['enabled']) ? $this->xmlAttrs['amexAcquired']['enabled'] === 'true' : false;
+	}
 }
