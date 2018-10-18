@@ -28,7 +28,7 @@ class OnlineTransaction
 	const XMLNS = 'http://www.litle.com/schema';
 	
 	/** API Version */
-	const API_VERSION = '9.2';
+	const API_VERSION = '9.14';
 	
 	/**
 	 * Constructor
@@ -341,7 +341,10 @@ class OnlineTransaction
 			'campaign' => XmlSpec::getDefaultSpec(),
 			'merchantGroupingId' => XmlSpec::getDefaultSpec()
 		));
-		
+
+		// Credentials on File requirement
+		$subspecs['processingType'] = XmlSpec::getDefaultSpec();
+
 		// Create spec
 		$spec = new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, $subspecs, null, array(
 			'id' => 0,
@@ -481,7 +484,10 @@ class OnlineTransaction
 			'campaign' => XmlSpec::getDefaultSpec(),
 			'merchantGroupingId' => XmlSpec::getDefaultSpec()
 		));
-		
+
+		// Credentials on File requirement
+		$subspecs['processingType'] = XmlSpec::getDefaultSpec();
+
 		// Create spec
 		$spec = new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, $subspecs, null, array(
 			'id' => 0,

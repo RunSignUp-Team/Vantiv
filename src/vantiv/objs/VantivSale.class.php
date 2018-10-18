@@ -47,7 +47,17 @@ class VantivSale extends VantivObj
 	{
 		return isset($this->saleResponse['message']) ? $this->saleResponse['message'] : null;
 	}
-	
+
+	/**
+	 * Get network transaction ID
+	 *
+	 * @return string|null Network transaction ID
+	 */
+	public function getNetworkTransactionId()
+	{
+		return isset($this->saleResponse['networkTransactionId']) ? $this->saleResponse['networkTransactionId'] : null;
+	}
+
 	/**
 	 * Was this a successful transaction
 	 *

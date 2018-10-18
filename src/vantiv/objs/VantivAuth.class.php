@@ -47,7 +47,17 @@ class VantivAuth extends VantivObj
 	{
 		return isset($this->authorizationResponse['message']) ? $this->authorizationResponse['message'] : null;
 	}
-	
+
+	/**
+	 * Get network transaction ID
+	 *
+	 * @return string|null Network transaction ID
+	 */
+	public function getNetworkTransactionId()
+	{
+		return isset($this->authorizationResponse['networkTransactionId']) ? $this->authorizationResponse['networkTransactionId'] : null;
+	}
+
 	/**
 	 * Was this a successful transaction
 	 *
