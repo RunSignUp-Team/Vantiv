@@ -345,6 +345,9 @@ class OnlineTransaction
 		// Credentials on File requirement
 		$subspecs['processingType'] = XmlSpec::getDefaultSpec();
 
+		// Original network transaction ID
+		$subspecs['originalNetworkTransactionId'] = XmlSpec::getDefaultSpec();
+
 		// Create spec
 		$spec = new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, $subspecs, null, array(
 			'id' => 0,
@@ -487,6 +490,9 @@ class OnlineTransaction
 
 		// Credentials on File requirement
 		$subspecs['processingType'] = XmlSpec::getDefaultSpec();
+
+		// Original network transaction ID
+		$subspecs['originalNetworkTransactionId'] = XmlSpec::getDefaultSpec();
 
 		// Create spec
 		$spec = new XmlSpec(XmlSpec::XML_SPEC_REQUIRED, $subspecs, null, array(
