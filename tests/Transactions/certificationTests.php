@@ -8,10 +8,14 @@ use vantiv\utils\VantivException;
 
 try
 {
-	$vantivApi = new Vantiv(VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD);
+	$vantivApi = new Vantiv(
+		VantivConfig::API_USERNAME, VantivConfig::API_PASSWORD,
+		defined('VantivConfig::PROXY') ? VantivConfig::PROXY : null,
+		defined('VantivConfig::PROXY_USER_PSWD') ? VantivConfig::PROXY_USER_PSWD : null
+	);
 	$onlineTransactionApi = new \vantiv\api\OnlineTransaction($vantivApi, VantivConfig::TRANSACTION_API_ENDPOINT);
-	$onlineTransactionApi->debug(true);
-	
+	//$onlineTransactionApi->debug(true);
+
 	$merchantId = '01131037';
 	
 	// Start batch
@@ -24,7 +28,7 @@ try
 		'amount' => 10010,
 		'orderSource'=>'ecommerce',
 		'billToAddress' => array(
-			'name' => 'John Smith',
+			'name' => 'John & Mary Smith',
 			'addressLine1' => '1 Main St.',
 			'city' => 'Burlington',
 			'state' => 'MA',
@@ -33,7 +37,7 @@ try
 		),
 		'card' => array(
 			'number' =>'4457010000000009',
-			'expDate' => '0116',
+			'expDate' => '0121',
 			'cardValidationNum' => '349',
 			'type' => 'VI'
 		)
@@ -59,7 +63,7 @@ try
 		),
 		'card' => array(
 			'number' =>'5112010000000003',
-			'expDate' => '0216',
+			'expDate' => '0221',
 			'cardValidationNum' => '261',
 			'type' => 'MC'
 		),
@@ -89,7 +93,7 @@ try
 		),
 		'card' => array(
 			'number' =>'6011010000000003',
-			'expDate' => '0316',
+			'expDate' => '0321',
 			'cardValidationNum' => '758',
 			'type' => 'DI'
 		)
@@ -116,7 +120,7 @@ try
 		),
 		'card' => array(
 			'number' =>'375001000000005',
-			'expDate' => '0416',
+			'expDate' => '0421',
 			'type' => 'AX'
 		)
 	), array(
@@ -134,7 +138,7 @@ try
 		'orderSource'=>'ecommerce',
 		'card' => array(
 			'number' =>'4100200300011001',
-			'expDate' => '0516',
+			'expDate' => '0521',
 			'cardValidationNum' => '463',
 			'type' => 'VI'
 		),
@@ -164,7 +168,7 @@ try
 		),
 		'card' => array(
 			'number' =>'4457010100000008',
-			'expDate' => '0616',
+			'expDate' => '0621',
 			'cardValidationNum' => '992',
 			'type' => 'VI'
 		)
@@ -191,7 +195,7 @@ try
 		),
 		'card' => array(
 			'number' =>'5112010100000002',
-			'expDate' => '0716',
+			'expDate' => '0721',
 			'cardValidationNum' => '251',
 			'type' => 'MC'
 		)
@@ -218,7 +222,7 @@ try
 		),
 		'card' => array(
 			'number' =>'6011010100000002',
-			'expDate' => '0816',
+			'expDate' => '0821',
 			'cardValidationNum' => '184',
 			'type' => 'DI'
 		)
@@ -246,7 +250,7 @@ try
 		),
 		'card' => array(
 			'number' =>'375001010000003',
-			'expDate' => '0916',
+			'expDate' => '0921',
 			'cardValidationNum' => '0421',
 			'type' => 'AX'
 		)
@@ -255,7 +259,94 @@ try
 	));
 	//$onlineTransactionApi->addSaleToBatch($batch, $merchantId, $data);
 	$sales[] = $data;
-	
+
+
+
+	// Order ID: Net_Id1
+	$data = new XmlValue(array(
+		'orderId' => 'Net_Id1',
+		'amount' => 4999,
+		'orderSource'=>'ecommerce',
+		'billToAddress' => array(
+			'name' => 'John & Mary Smith',
+			'addressLine1' => '1 Main St.',
+			'city' => 'Burlington',
+			'state' => 'MA',
+			'zip' => '01803-3747',
+			'country' => 'US'
+		),
+		'card' => array(
+			'number' =>'4100200300011001',
+			'expDate' => '0521',
+			'cardValidationNum' => '463',
+			'type' => 'VI'
+		),
+		'processingType' => 'initialRecurring'
+	), array(
+		'reportGroup' => 'Certification Test'
+	));
+	//$onlineTransactionApi->addSaleToBatch($batch, $merchantId, $data);
+	$sales[] = $data;
+
+
+
+	// Order ID: Net_Id2
+	$data = new XmlValue(array(
+		'orderId' => 'Net_Id2',
+		'amount' => 5500,
+		'orderSource'=>'ecommerce',
+		'billToAddress' => array(
+			'name' => 'John & Mary Smith',
+			'addressLine1' => '1 Main St.',
+			'city' => 'Burlington',
+			'state' => 'MA',
+			'zip' => '01803-3747',
+			'country' => 'US'
+		),
+		'card' => array(
+			'number' =>'4457010000000009',
+			'expDate' => '0121',
+			'cardValidationNum' => '349',
+			'type' => 'VI'
+		),
+		'processingType' => 'initialInstallment'
+	), array(
+		'reportGroup' => 'Certification Test'
+	));
+	//$onlineTransactionApi->addSaleToBatch($batch, $merchantId, $data);
+	$sales[] = $data;
+
+
+
+	// Order ID: Net_Id3
+	$data = new XmlValue(array(
+		'orderId' => 'Net_Id3',
+		'amount' => 5500,
+		'orderSource'=>'ecommerce',
+		'billToAddress' => array(
+			'name' => 'John Smith',
+			'addressLine1' => '1 Main St.',
+			'city' => 'Waltham',
+			'state' => 'MA',
+			'zip' => '02453',
+			'country' => 'US'
+		),
+		'card' => array(
+			'number' =>'4457000800000002',
+			'expDate' => '0121',
+			'cardValidationNum' => '349',
+			'type' => 'VI'
+		),
+		'processingType' => 'initialCOF'
+	), array(
+		'reportGroup' => 'Certification Test'
+	));
+	//$onlineTransactionApi->addSaleToBatch($batch, $merchantId, $data);
+	$sales[] = $data;
+
+
+
+	$round2Sales = [];
 	/*
 	$resps = $vantivApi->executeNonAtomicBatch($batch);
 	foreach ($resps as $idx=>$resp)
@@ -274,7 +365,242 @@ try
 	{
 		echo "\n================================================================================\n\n";
 		$saleResp = $onlineTransactionApi->sale($merchantId, $sale);
-		print_r($saleResp);
+
+		// Check for order ID and verify
+		$verified = false;
+		if (isset($saleResp->saleResponse['orderId']))
+		{
+			$orderId = $saleResp->saleResponse['orderId'];
+			print 'Order ID: ' . $orderId . PHP_EOL;
+
+			switch ($orderId)
+			{
+				case '1':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '11111' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '01' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'M';
+					break;
+				case '2':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '22222' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '10' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'M';
+					break;
+				case '3':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '33333' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '10' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'M';
+					break;
+				case '4':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '44444' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '13';
+					break;
+				case '5':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '55555' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '32' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'M';
+					break;
+				case '6':
+					$verified = $saleResp->saleResponse['response'] == '110' &&
+						$saleResp->saleResponse['message'] == 'Insufficient Funds' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '34' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'P';
+					break;
+				case '7':
+					$verified = $saleResp->saleResponse['response'] == '301' &&
+						$saleResp->saleResponse['message'] == 'Invalid Account Number' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '34' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'N';
+					break;
+				case '8':
+					$verified = $saleResp->saleResponse['response'] == '123' &&
+						$saleResp->saleResponse['message'] == 'Call Discover' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '34' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'P';
+					break;
+				case '9':
+					$verified = $saleResp->saleResponse['response'] == '303' &&
+						$saleResp->saleResponse['message'] == 'Pick Up Card' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '34' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'P';
+					break;
+				case 'Net_Id1':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						$saleResp->getNetworkTransactionId() !== null;
+
+					// Add next sale
+					$data = new XmlValue(array(
+						'orderId' => 'Net_Id1a',
+						'amount' => 4999,
+						'orderSource'=>'recurring',
+						'billToAddress' => array(
+							'name' => 'John & Mary Smith',
+							'addressLine1' => '1 Main St.',
+							'city' => 'Burlington',
+							'state' => 'MA',
+							'zip' => '01803-3747',
+							'country' => 'US'
+						),
+						'card' => array(
+							'number' =>'4100200300011001',
+							'expDate' => '0521',
+							'cardValidationNum' => '463',
+							'type' => 'VI'
+						),
+						'originalNetworkTransactionId' => $saleResp->getNetworkTransactionId()
+					), array(
+						'reportGroup' => 'Certification Test'
+					));
+					$round2Sales[] = $data;
+					break;
+				case 'Net_Id2':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '11111' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '01' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'M' &&
+						$saleResp->getNetworkTransactionId() !== null;
+
+					// Add next sale
+					$data = new XmlValue(array(
+						'orderId' => 'Net_Id2a',
+						'amount' => 5500,
+						'orderSource'=>'installment',
+						'billToAddress' => array(
+							'name' => 'John & Mary Smith',
+							'addressLine1' => '1 Main St.',
+							'city' => 'Burlington',
+							'state' => 'MA',
+							'zip' => '01803-3747',
+							'country' => 'US'
+						),
+						'card' => array(
+							'number' =>'4457010000000009',
+							'expDate' => '0121',
+							'cardValidationNum' => '349',
+							'type' => 'VI'
+						),
+						'originalNetworkTransactionId' => $saleResp->getNetworkTransactionId()
+					), array(
+						'reportGroup' => 'Certification Test'
+					));
+					$round2Sales[] = $data;
+					break;
+				case 'Net_Id3':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved' &&
+						trim($saleResp->saleResponse['authCode']) == '11111' &&
+						$saleResp->saleResponse['fraudResult']['avsResult'] == '00' &&
+						$saleResp->saleResponse['fraudResult']['cardValidationResult'] == 'P' &&
+						$saleResp->getNetworkTransactionId() !== null;
+
+					// Add next sale
+					$data = new XmlValue(array(
+						'orderId' => 'Net_Id3a',
+						'amount' => 2500,
+						'orderSource'=>'ecommerce',
+						'billToAddress' => array(
+							'name' => 'John Smith',
+							'addressLine1' => '1 Main St.',
+							'city' => 'Waltham',
+							'state' => 'MA',
+							'zip' => '02453',
+							'country' => 'US'
+						),
+						'card' => array(
+							'number' =>'4457000800000002',
+							'expDate' => '0121',
+							'cardValidationNum' => '349',
+							'type' => 'VI'
+						),
+						'processingType' => 'merchantInitiatedCOF',
+						'originalNetworkTransactionId' => $saleResp->getNetworkTransactionId()
+					), array(
+						'reportGroup' => 'Certification Test'
+					));
+					$round2Sales[] = $data;
+					// Add next sale
+					$data = new XmlValue(array(
+						'orderId' => 'Net_Id3b',
+						'amount' => 4000,
+						'orderSource'=>'ecommerce',
+						'billToAddress' => array(
+							'name' => 'John Smith',
+							'addressLine1' => '1 Main St.',
+							'city' => 'Waltham',
+							'state' => 'MA',
+							'zip' => '02453',
+							'country' => 'US'
+						),
+						'card' => array(
+							'number' =>'4457000800000002',
+							'expDate' => '0121',
+							'cardValidationNum' => '349',
+							'type' => 'VI'
+						),
+						'processingType' => 'merchantInitiatedCOF',
+						'originalNetworkTransactionId' => $saleResp->getNetworkTransactionId()
+					), array(
+						'reportGroup' => 'Certification Test'
+					));
+					$round2Sales[] = $data;
+					break;
+			}
+		}
+
+		// Output transaction ID
+		print 'Transaction ID: ' . $saleResp->getTransactionId() . PHP_EOL;
+
+		// Output verified message or returned info otherwise.
+		if ($verified)
+			print 'Verified' . PHP_EOL;
+		else
+			print_r($saleResp);
+	}
+
+	// Round 2 sales
+	foreach ($round2Sales as $sale)
+	{
+		echo "\n================================================================================\n\n";
+		$saleResp = $onlineTransactionApi->sale($merchantId, $sale);
+
+		// Check for order ID and verify
+		$verified = false;
+		if (isset($saleResp->saleResponse['orderId']))
+		{
+			$orderId = $saleResp->saleResponse['orderId'];
+			print 'Order ID: ' . $orderId . PHP_EOL;
+
+			switch ($orderId)
+			{
+				case 'Net_Id1a':
+				case 'Net_Id2a':
+				case 'Net_Id3a':
+				case 'Net_Id3b':
+					$verified = $saleResp->saleResponse['response'] == '000' &&
+						$saleResp->saleResponse['message'] == 'Approved';
+					break;
+			}
+		}
+
+		// Output transaction ID
+		print 'Transaction ID: ' . $saleResp->getTransactionId() . PHP_EOL;
+
+		// Output verified message or returned info otherwise.
+		if ($verified)
+			print 'Verified' . PHP_EOL;
+		else
+			print_r($saleResp);
 	}
 } catch (\vantiv\utils\InvalidRequestException $e) {
 	print_r($e->error);
