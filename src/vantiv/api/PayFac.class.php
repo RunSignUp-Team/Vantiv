@@ -344,6 +344,7 @@ class PayFac
 				'backgroundCheckFields'=> $this->principalBackgroundCheckFieldsSpec()
 			)),
 			'backgroundCheckFields'=> $this->backgroundCheckFieldsSpec(),
+			'legalEntityOwnershipType' => XmlSpec::getRequiredSpec(),
 			'yearsInBusiness' => new XmlSpec(XmlSpec::XML_SPEC_INT)
 		);
 	}
